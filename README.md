@@ -1,12 +1,8 @@
 # FarmEase: Solusi Pertanian Cerdas untuk Petani Lahan Kering Kupang 🌾
 
-!(https://placehold.co/800x400/28a745/ffffff?text=FarmEase)
-
-
-
 FarmEase adalah sebuah platform web inovatif yang didesain untuk memberdayakan petani lahan kering di Kabupaten Kupang, Nusa Tenggara Timur. Platform ini menyediakan informasi penting secara dinamis dan real-time yang dapat membantu petani membuat keputusan yang lebih baik dan strategis.
 
----
+
 
 ## 🎯 Fitur Utama
 
@@ -37,7 +33,7 @@ Untuk menjalankan proyek ini secara lokal, ikuti langkah-langkah berikut:
 
 1.  **Clone repositori:**
     ```bash
-    git clone [https://github.com/Hendrasetiawanolybunga/api-cuaca.git](https://github.com/Hendrasetiawanolybunga/api-cuaca.git)
+    git clone https://github.com/Hendrasetiawanolybunga/api-cuaca.git
     cd farmease
     ```
 

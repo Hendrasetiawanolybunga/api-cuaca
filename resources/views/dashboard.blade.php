@@ -10,8 +10,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINf9Sg87fC7zYxHqXb4R/qHhQ5U0E0t6g=" crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20n69zJm9yFp2iP9R55P5z2f/rR/Qx8M5a6LzJ6D+C+k=" crossorigin=""></script>
+    {{-- BARIS YANG DIPERBAIKI --}}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    {{-- AKHIR BARIS PERBAIKAN --}}
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <style>
@@ -80,7 +83,7 @@
             height: 400px;
             width: 100%;
             border-radius: 8px;
-            z-index: 1; /* Pastikan peta di atas elemen lain */
+            z-index: 1;
         }
     </style>
 </head>
@@ -211,153 +214,151 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-  <script>
-    // Data Grafik Harga Pasar
-    const dataHarga = @json($dataHarga);
-    const ctx = document.getElementById('hargaJagungChart').getContext('2d');
-    const myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: dataHarga.labels,
-            datasets: [{
-                label: 'Harga Jagung (Rp)',
-                data: dataHarga.harga,
-                backgroundColor: 'rgba(40, 167, 69, 0.2)',
-                borderColor: 'rgba(40, 167, 69, 1)',
-                borderWidth: 2,
-                fill: true,
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: {
-                    beginAtZero: false,
-                    ticks: {
-                        callback: function(value) { return 'Rp ' + value.toLocaleString('id-ID'); }
+    <script>
+        // Data Grafik Harga Pasar
+        const dataHarga = @json($dataHarga);
+        const ctx = document.getElementById('hargaJagungChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dataHarga.labels,
+                datasets: [{
+                    label: 'Harga Jagung (Rp)',
+                    data: dataHarga.harga,
+                    backgroundColor: 'rgba(40, 167, 69, 0.2)',
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        ticks: {
+                            callback: function(value) { return 'Rp ' + value.toLocaleString('id-ID'); }
+                        }
+                    },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // Logika Peta Interaktif ,
+        let map = L.map('map').setView([-10.0647185, 123.8625032], 10);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        });
+
+        const baseLayers = {
+            "Default": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }),
+            "Satelit": satelliteLayer
+        };
+
+        L.control.layers(baseLayers).addTo(map);
+
+        let currentMarker;
+
+        map.on('click', function(e) {
+            const { lat, lng } = e.latlng;
+            
+            if (currentMarker) {
+                map.removeLayer(currentMarker);
+            }
+
+            currentMarker = L.marker([lat, lng]).addTo(map);
+            
+            const weatherCard = document.getElementById('current-weather');
+            const forecastSection = document.getElementById('forecast-section');
+            weatherCard.innerHTML = '<div class="spinner-border text-success" role="status"></div><p class="mt-3">Mengambil data...</p>';
+            forecastSection.innerHTML = '<div class="text-center"><div class="spinner-border text-success" role="status"></div><p class="mt-3">Mengambil data...</p></div>';
+
+            axios.get(`/get-weather?lat=${lat}&lon=${lng}`)
+                .then(response => {
+                    const data = response.data;
+                    updateWeatherUI(data.dataCuacaSaatIni, data.dataForecast);
+                })
+                .catch(error => {
+                    weatherCard.innerHTML = '<p class="text-danger mt-3">Gagal mengambil data cuaca.</p>';
+                    forecastSection.innerHTML = '<p class="text-center text-danger mt-3">Gagal mengambil data prediksi.</p>';
+                    console.error('Error fetching weather data:', error);
+                });
+        });
+
+        function updateWeatherUI(current, forecast) {
+            const weatherCard = document.getElementById('current-weather');
+            if (current) {
+                weatherCard.innerHTML = `
+                    <i class="bi bi-${getWeatherIcon(current.weather[0].main)} weather-icon"></i>
+                    <h2 class="display-4 fw-bold mt-2 text-success">${Math.round(current.main.temp)}°C</h2>
+                    <p class="lead text-muted mb-3">${ucwords(current.weather[0].description)}</p>
+                    <div class="row g-2 text-center">
+                        <div class="col-6">
+                            <p class="mb-0 text-dark"><i class="bi bi-droplet-half me-1 text-info"></i> Kelembaban</p>
+                            <h6 class="fw-bold">${current.main.humidity}%</h6>
+                        </div>
+                        <div class="col-6">
+                            <p class="mb-0 text-dark"><i class="bi bi-wind me-1 text-primary"></i> Angin</p>
+                            <h6 class="fw-bold">${Math.round(current.wind.speed)} km/j</h6>
+                        </div>
+                    </div>
+                    <small class="text-muted mt-3 d-block">Data dari OpenWeatherMap</small>
+                `;
+            } else {
+                weatherCard.innerHTML = '<p class="text-danger mt-3">Data cuaca tidak tersedia.</p>';
+            }
+
+            const forecastSection = document.getElementById('forecast-section');
+            if (forecast && forecast.list.length > 0) {
+                let forecastHtml = '<div class="row row-cols-2 row-cols-md-5 g-2 text-center">';
+                let uniqueDays = [];
+                forecast.list.forEach(item => {
+                    const date = new Date(item.dt * 1000).toISOString().split('T')[0];
+                    if (!uniqueDays.includes(date) && uniqueDays.length < 5) {
+                        uniqueDays.push(date);
+                        forecastHtml += `
+                            <div class="col">
+                                <div class="forecast-card d-flex flex-column align-items-center">
+                                    <small class="fw-bold">${new Date(item.dt * 1000).toLocaleDateString('id-ID', { weekday: 'short' })}</small>
+                                    <i class="bi bi-${getWeatherIcon(item.weather[0].main)} my-2"></i>
+                                    <small class="fw-bold">${Math.round(item.main.temp)}°C</small>
+                                    <small class="text-muted">${ucwords(item.weather[0].description)}</small>
+                                </div>
+                            </div>
+                        `;
                     }
-                },
-                x: { grid: { display: false } }
+                });
+                forecastHtml += '</div>';
+                forecastSection.innerHTML = forecastHtml;
+            } else {
+                forecastSection.innerHTML = '<p class="text-center text-muted">Data prediksi tidak tersedia.</p>';
             }
         }
-    });
 
-    // Logika Peta Interaktif
-    let map = L.map('map').setView([-10.1783, 123.5937], 10);
-
-    // Definisikan layer peta
-    const defaultLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map); // Layer default langsung ditambahkan ke peta
-
-    // Tambahkan layer satelit dari Esri World Imagery
-    const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-    });
-
-    // Kelompokkan layer-layer yang akan ditampilkan di kontrol
-    const baseLayers = {
-        "Default": defaultLayer,
-        "Satelit": satelliteLayer
-    };
-
-    // Tambahkan kontrol layer ke peta
-    L.control.layers(baseLayers).addTo(map);
-
-    let currentMarker;
-
-    map.on('click', function(e) {
-        const { lat, lng } = e.latlng;
-        
-        if (currentMarker) {
-            map.removeLayer(currentMarker);
+        function getWeatherIcon(main) {
+            main = main.toLowerCase();
+            if (main === 'clear') return 'sun';
+            if (main === 'clouds') return 'cloud';
+            if (main === 'rain') return 'cloud-rain';
+            if (main === 'drizzle') return 'cloud-drizzle';
+            if (main === 'thunderstorm') return 'cloud-lightning';
+            if (main === 'snow') return 'cloud-snow';
+            return 'cloud';
         }
 
-        currentMarker = L.marker([lat, lng]).addTo(map);
-        
-        const weatherCard = document.getElementById('current-weather');
-        const forecastSection = document.getElementById('forecast-section');
-        weatherCard.innerHTML = '<div class="spinner-border text-success" role="status"></div><p class="mt-3">Mengambil data...</p>';
-        forecastSection.innerHTML = '<div class="text-center"><div class="spinner-border text-success" role="status"></div><p class="mt-3">Mengambil data...</p></div>';
-
-        axios.get(`/get-weather?lat=${lat}&lon=${lng}`)
-            .then(response => {
-                const data = response.data;
-                updateWeatherUI(data.dataCuacaSaatIni, data.dataForecast);
-            })
-            .catch(error => {
-                weatherCard.innerHTML = '<p class="text-danger mt-3">Gagal mengambil data cuaca.</p>';
-                forecastSection.innerHTML = '<p class="text-center text-danger mt-3">Gagal mengambil data prediksi.</p>';
-                console.error('Error fetching weather data:', error);
-            });
-    });
-
-    function updateWeatherUI(current, forecast) {
-        const weatherCard = document.getElementById('current-weather');
-        if (current) {
-            weatherCard.innerHTML = `
-                <i class="bi bi-${getWeatherIcon(current.weather[0].main)} weather-icon"></i>
-                <h2 class="display-4 fw-bold mt-2 text-success">${Math.round(current.main.temp)}°C</h2>
-                <p class="lead text-muted mb-3">${ucwords(current.weather[0].description)}</p>
-                <div class="row g-2 text-center">
-                    <div class="col-6">
-                        <p class="mb-0 text-dark"><i class="bi bi-droplet-half me-1 text-info"></i> Kelembaban</p>
-                        <h6 class="fw-bold">${current.main.humidity}%</h6>
-                    </div>
-                    <div class="col-6">
-                        <p class="mb-0 text-dark"><i class="bi bi-wind me-1 text-primary"></i> Angin</p>
-                        <h6 class="fw-bold">${Math.round(current.wind.speed)} km/j</h6>
-                    </div>
-                </div>
-                <small class="text-muted mt-3 d-block">Data dari OpenWeatherMap</small>
-            `;
-        } else {
-            weatherCard.innerHTML = '<p class="text-danger mt-3">Data cuaca tidak tersedia.</p>';
+        function ucwords(str) {
+            return str.replace(/(^|\s)\S/g, function(t) { return t.toUpperCase() });
         }
-
-        const forecastSection = document.getElementById('forecast-section');
-        if (forecast && forecast.list.length > 0) {
-            let forecastHtml = '<div class="row row-cols-2 row-cols-md-5 g-2 text-center">';
-            let uniqueDays = [];
-            forecast.list.forEach(item => {
-                const date = new Date(item.dt * 1000).toISOString().split('T')[0];
-                if (!uniqueDays.includes(date) && uniqueDays.length < 5) {
-                    uniqueDays.push(date);
-                    forecastHtml += `
-                        <div class="col">
-                            <div class="forecast-card d-flex flex-column align-items-center">
-                                <small class="fw-bold">${new Date(item.dt * 1000).toLocaleDateString('id-ID', { weekday: 'short' })}</small>
-                                <i class="bi bi-${getWeatherIcon(item.weather[0].main)} my-2"></i>
-                                <small class="fw-bold">${Math.round(item.main.temp)}°C</small>
-                                <small class="text-muted">${ucwords(item.weather[0].description)}</small>
-                            </div>
-                        </div>
-                    `;
-                }
-            });
-            forecastHtml += '</div>';
-            forecastSection.innerHTML = forecastHtml;
-        } else {
-            forecastSection.innerHTML = '<p class="text-center text-muted">Data prediksi tidak tersedia.</p>';
-        }
-    }
-
-    function getWeatherIcon(main) {
-        main = main.toLowerCase();
-        if (main === 'clear') return 'sun';
-        if (main === 'clouds') return 'cloud';
-        if (main === 'rain') return 'cloud-rain';
-        if (main === 'drizzle') return 'cloud-drizzle';
-        if (main === 'thunderstorm') return 'cloud-lightning';
-        if (main === 'snow') return 'cloud-snow';
-        return 'cloud';
-    }
-
-    function ucwords(str) {
-        return str.replace(/(^|\s)\S/g, function(t) { return t.toUpperCase() });
-    }
-</script>
+    </script>
 </body>
 </html>
