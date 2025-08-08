@@ -8,21 +8,22 @@ return new class extends Migration {
     public function up(): void
     {
         // Peran
-        Schema::create('peran', function (Blueprint $table) {
-            $table->id('peran_id');
-            $table->string('peran_nama');
-            $table->timestamps();
-        });
+        // Schema::create('peran', function (Blueprint $table) {
+        //     $table->id('peran_id');
+        //     $table->string('peran_nama');
+        //     $table->timestamps();
+        // });
 
         // Pengguna
         Schema::create('pengguna', function (Blueprint $table) {
             $table->id('pengguna_id');
+            $table->string('pengguna_peran');
             $table->string('pengguna_nama');
             $table->string('pengguna_email')->unique();
             $table->string('pengguna_password');
             $table->string('pengguna_lokasi');
-            $table->unsignedBigInteger('peran_id');
-            $table->foreign('peran_id')->references('peran_id')->on('peran')->onDelete('cascade');
+            // $table->unsignedBigInteger('peran_id');
+            // $table->foreign('peran_id')->references('peran_id')->on('peran')->onDelete('cascade');
             $table->timestamps();
         });
 
@@ -77,6 +78,6 @@ return new class extends Migration {
         Schema::dropIfExists('musim_tanam');
         Schema::dropIfExists('kebun');
         Schema::dropIfExists('pengguna');
-        Schema::dropIfExists('peran');
+        // Schema::dropIfExists('peran');
     }
 };

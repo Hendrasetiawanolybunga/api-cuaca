@@ -29,9 +29,9 @@
         <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">
             <i class="fa-solid fa-gauge-high"></i> Dashboard
         </a>
-        <a href="{{ url('/admin/peran') }}" class="{{ request()->is('admin/peran*') ? 'active' : '' }}">
+        {{-- <a href="{{ url('/admin/peran') }}" class="{{ request()->is('admin/peran*') ? 'active' : '' }}">
             <i class="fa-solid fa-user-shield"></i> Peran
-        </a>
+        </a> --}}
         <a href="{{ url('/admin/pengguna') }}" class="{{ request()->is('admin/pengguna*') ? 'active' : '' }}">
             <i class="fa-solid fa-users"></i> Pengguna
         </a>

@@ -49,7 +49,7 @@
                 <td>{{ $p->pengguna_nama }}</td>
                 <td>{{ $p->pengguna_email }}</td>
                 <td>{{ $p->pengguna_lokasi }}</td>
-                <td>{{ $p->peran->peran_nama }}</td>
+                <td>{{ $p->pengguna_peran }}</td>
                 <td>
                     <a href="{{ route('pengguna.edit', $p->pengguna_id) }}" class="btn btn-warning btn-sm">
                         <i class="fa-solid fa-edit"></i>
