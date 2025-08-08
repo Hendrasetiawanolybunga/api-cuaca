@@ -25,7 +25,7 @@ class DashboardController extends Controller
         // Panggil metode getWeather untuk data cuaca awal
         $weatherData = $this->getWeatherData($lat, $lon);
 
-        return view('dashboard', array_merge(['dataHarga' => $dataHarga], $weatherData));
+        return view('dashboard', array_merge($weatherData));
     }
 
     // Metode baru untuk mengambil data cuaca dari API

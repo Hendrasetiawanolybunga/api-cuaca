@@ -11,13 +11,13 @@ class MusimTanamController extends Controller
     public function index()
     {
         $data = MusimTanam::with('kebun')->latest()->paginate(10);
-        return view('musim_tanam.index', compact('data'));
+        return view('musimtanam.index', compact('data'));
     }
 
     public function create()
     {
         $kebun = Kebun::all();
-        return view('musim_tanam.create', compact('kebun'));
+        return view('musimtanam.create', compact('kebun'));
     }
 
     public function store(Request $request)
@@ -36,7 +36,7 @@ class MusimTanamController extends Controller
     public function edit(MusimTanam $musim_tanam)
     {
         $kebun = Kebun::all();
-        return view('musim_tanam.edit', compact('musim_tanam', 'kebun'));
+        return view('musimtanam.edit', compact('musim_tanam', 'kebun'));
     }
 
     public function update(Request $request, MusimTanam $musim_tanam)

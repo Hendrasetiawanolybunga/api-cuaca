@@ -1,32 +1,16 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FarmEase - Cuaca & Harga Pasar Kupang</title>
+@extends('layouts.app')
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@section('title', 'Dashboard - Cuaca & Harga Pasar')
 
-    {{-- BARIS YANG DIPERBAIKI --}}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    {{-- AKHIR BARIS PERBAIKAN --}}
-
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-    <style>
+@push('styles')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
         :root {
             --bs-green-primary: #28a745;
             --bs-green-light: #e6ffe6;
             --bs-orange-primary: #ffc107;
             --bs-orange-light: #fff8e6;
-        }
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f0f4f8;
         }
         .navbar-brand {
             font-weight: bold;
@@ -86,31 +70,20 @@
             z-index: 1;
         }
     </style>
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <i class="bi bi-leaf me-2 fs-4"></i> FarmEase
-            </a>
-            <span class="navbar-text ms-auto">
-                Informasi Pertanian Kupang
-            </span>
-        </div>
-    </nav>
+@endpush
+@section('content')
 
-    <main class="py-5">
-        <div class="container">
-            <div class="row justify-content-center hero-section">
-                <div class="col-md-10 text-center text-dark">
-                    <h1 class="display-5 fw-bold mb-3">
-                        <i class="bi bi-check2-circle text-success"></i> FarmEase
-                    </h1>
-                    <p class="lead text-muted">
-                        Informasi Cuaca & Harga Pasar Terkini untuk Petani Lahan Kering di Kabupaten Kupang.
-                    </p>
-                </div>
+    <div class="container">
+        <div class="row justify-content-center hero-section mb-4">
+            <div class="col-md-10 text-center text-dark">
+                <h1 class="display-5 fw-bold mb-3">
+                    <i class="bi bi-check2-circle text-success"></i> FarmEase
+                </h1>
+                <p class="lead text-muted">
+                    Informasi Cuaca & Harga Pasar Terkini untuk Petani Lahan Kering di Kabupaten Kupang.
+                </p>
             </div>
+        </div>
 
             <div class="row g-4 mb-5">
                 {{-- Bagian Peta --}}
@@ -192,20 +165,8 @@
                 </div>
             </div>
 
-            <div class="row justify-content-center mb-5">
-                <div class="col-md-8">
-                    <div class="card shadow-sm bg-white border-warning">
-                        <div class="card-header bg-card-orange border-warning">
-                            <h5 class="mb-0"><i class="bi bi-currency-dollar me-2 text-warning"></i> Tren Harga Jagung Pipilan Kering</h5>
-                        </div>
-                        <div class="card-body p-4">
-                            <canvas id="hargaJagungChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          
         </div>
-    </main>
 
     <footer class="footer mt-auto py-4 bg-white shadow-sm">
         <div class="container text-center">
@@ -215,38 +176,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
-        // Data Grafik Harga Pasar
-        const dataHarga = @json($dataHarga);
-        const ctx = document.getElementById('hargaJagungChart').getContext('2d');
-        const myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: dataHarga.labels,
-                datasets: [{
-                    label: 'Harga Jagung (Rp)',
-                    data: dataHarga.harga,
-                    backgroundColor: 'rgba(40, 167, 69, 0.2)',
-                    borderColor: 'rgba(40, 167, 69, 1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: {
-                        beginAtZero: false,
-                        ticks: {
-                            callback: function(value) { return 'Rp ' + value.toLocaleString('id-ID'); }
-                        }
-                    },
-                    x: { grid: { display: false } }
-                }
-            }
-        });
-
         // Logika Peta Interaktif ,
         let map = L.map('map').setView([-10.0647185, 123.8625032], 10);
         
@@ -360,5 +289,4 @@
             return str.replace(/(^|\s)\S/g, function(t) { return t.toUpperCase() });
         }
     </script>
-</body>
-</html>
+@endsection

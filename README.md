@@ -11,7 +11,7 @@ FarmEase dirancang dengan fokus pada kegunaan dan relevansi lokal, menawarkan fi
 -   **Peta Interaktif 🗺️**: Menampilkan peta Kabupaten Kupang yang dapat diklik untuk melihat data cuaca spesifik di lokasi tersebut. Ini memungkinkan petani untuk mendapatkan informasi yang sangat lokal dan relevan dengan lahan mereka.
 -   **Data Cuaca Real-time ☀️**: Menyajikan data cuaca terkini (suhu, kelembaban, kecepatan angin) dari OpenWeatherMap yang diperbarui secara dinamis berdasarkan lokasi yang dipilih pada peta.
 -   **Prediksi Cuaca 5 Hari 🌦️**: Memberikan prakiraan cuaca untuk 5 hari ke depan, membantu petani merencanakan aktivitas tanam, panen, atau pengolahan lahan dengan lebih efektif.
--   **Tren Harga Pasar 📈**: Menampilkan grafik tren harga jagung pipilan kering, komoditas utama di Kupang, yang bersumber dari data pasar lokal. Fitur ini membantu petani dalam menentukan waktu terbaik untuk menjual hasil panen.
+
 
 ---
 
@@ -22,7 +22,6 @@ FarmEase dibangun di atas tumpukan teknologi modern untuk memastikan kinerja yan
 -   **Backend**: **Laravel** (PHP Framework)
 -   **Frontend**: **HTML**, **CSS** (**Bootstrap 5**), **JavaScript**
 -   **Peta**: **Leaflet.js** dan layer **OpenStreetMap** & **Esri World Imagery**
--   **Grafik**: **Chart.js** untuk visualisasi data
 -   **Permintaan API**: **Guzzle** dan **Axios**
 
 ---
@@ -79,4 +78,4 @@ Proyek ini dilisensikan di bawah **Lisensi MIT**. Lihat file [LICENSE](LICENSE) 
 
 ---
 
-Copyright © 2025 FarmEase Team.
+Copyright © 2025 **JHJ** Team.

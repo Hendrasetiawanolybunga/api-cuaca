@@ -7,6 +7,7 @@ use App\Http\Controllers\KebunController;
 use App\Http\Controllers\MusimTanamController;
 use App\Http\Controllers\PestisidaController;
 use App\Http\Controllers\PupukController;
+use App\Http\Controllers\DashboardController;
 
 Route::prefix('admin')->group(function () {
     Route::resource('peran', PeranController::class);
@@ -18,8 +19,8 @@ Route::prefix('admin')->group(function () {
 });
 
 
-// <!-- // Route untuk halaman dashboard utama
-// Route::get('/', [DashboardController::class, 'index']);
+// Route untuk halaman dashboard utama
+Route::get('/', [DashboardController::class, 'index']);
 
-// Route baru untuk mengambil data cuaca berdasarkan koordinat
-// Route::get('/get-weather', [DashboardController::class, 'getWeather']); --> -->
+// Route untuk mengambil data cuaca berdasarkan koordinat
+Route::get('/get-weather', [DashboardController::class, 'getWeather']);

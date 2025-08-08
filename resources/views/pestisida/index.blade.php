@@ -3,54 +3,70 @@
 @section('title', 'Data Pestisida')
 
 @section('content')
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="fw-bold">Data Pestisida</h2>
-        <a href="{{ route('pestisida.create') }}" class="btn btn-primary">
-            <i class="fa fa-plus"></i> Tambah Pestisida
-        </a>
+<!-- Page Header -->
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2><i class="fa-solid fa-spray-can-sparkles me-2"></i> Data Pestisida</h2>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{{ url('/') }}">Dashboard</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Pestisida</li>
+            </ol>
+        </nav>
     </div>
+</div>
 
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+@if(session('success'))
+<div class="alert alert-success">
+    <i class="fa-solid fa-circle-check me-2"></i> {{ session('success') }}
+</div>
+@endif
 
-    <div class="table-responsive">
-        <table class="table table-bordered align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th>No</th>
-                    <th>Tanggal Pakai</th>
-                    <th>Jenis</th>
-                    <th>Dosis Pakai</th>
-                    <th>Musim Tanam</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($pestisidas as $index => $pestisida)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $pestisida->pestisida_tanggal_pakai }}</td>
-                    <td>{{ $pestisida->pestisida_jenis }}</td>
-                    <td>{{ $pestisida->pestisida_dosis_pakai }}</td>
-                    <td>{{ $pestisida->musimTanam->mt_komoditas }}</td>
-                    <td>
-                        <a href="{{ route('pestisida.edit', $pestisida->pestisida_id) }}" class="btn btn-warning btn-sm">
-                            <i class="fa fa-edit"></i>
-                        </a>
-                        <form action="{{ route('pestisida.destroy', $pestisida->pestisida_id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus data ini?')">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-danger btn-sm">
-                                <i class="fa fa-trash"></i>
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
+<div class="d-flex justify-content-end mb-3">
+    <a href="{{ route('pestisida.create') }}" class="btn btn-success">
+        <i class="fa-solid fa-plus me-2"></i> Tambah Pestisida
+    </a>
+</div>
+
+<div class="table-container">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th width="5%">No</th>
+                <th width="20%">Tanggal Pakai</th>
+                <th width="20%">Jenis</th>
+                <th width="20%">Dosis Pakai</th>
+                <th width="20%">Musim Tanam</th>
+                <th width="15%">Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($data as $index => $pestisida)
+            <tr>
+                <td>{{ $index + 1 }}</td>
+                <td>{{ $pestisida->pestisida_tanggal_pakai }}</td>
+                <td>{{ $pestisida->pestisida_jenis }}</td>
+                <td>{{ $pestisida->pestisida_dosis_pakai }}</td>
+                <td>{{ $pestisida->musimTanam->mt_komoditas }}</td>
+                <td>
+                    <a href="{{ route('pestisida.edit', $pestisida->pestisida_id) }}" class="btn btn-warning btn-sm">
+                        <i class="fa-solid fa-edit"></i>
+                    </a>
+                    <form action="{{ route('pestisida.destroy', $pestisida->pestisida_id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus data ini?')">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-danger btn-sm">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="6" class="text-center">Tidak ada data pestisida</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
 </div>
 @endsection
