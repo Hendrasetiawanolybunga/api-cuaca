@@ -21,6 +21,20 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
+                $user = Auth::user();
+
+                if ($user->pengguna_peran === 'admin') {
+                    return redirect()->route('login');
+                }
+
+                if ($user->pengguna_peran === 'penyuluh') {
+                    return redirect()->route('login');
+                }
+
+                if ($user->pengguna_peran === 'petani') {
+                    return redirect()->route('login');
+                }
+
                 return redirect('/');
             }
         }

@@ -44,6 +44,21 @@
             </div>
 
             <div class="mb-3">
+                <label class="form-label">Peran</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fa-solid fa-user-tag"></i></span>
+                    <select name="peran" class="form-select @error('peran') is-invalid @enderror" required>
+                        <option value="">-- Pilih Peran --</option>
+                        <option value="penyuluh" {{ old('peran') == 'penyuluh' ? 'selected' : '' }}>Penyuluh</option>
+                        <option value="petani" {{ old('peran') == 'petani' ? 'selected' : '' }}>Petani</option>
+                    </select>
+                    @error('peran')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-lock"></i></span>

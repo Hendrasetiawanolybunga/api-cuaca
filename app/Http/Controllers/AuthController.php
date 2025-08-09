@@ -68,13 +68,14 @@ class AuthController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:pengguna,pengguna_email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'peran' => ['required'],
         ]);
 
         $user = Pengguna::create([
             'pengguna_nama' => $request->name,
             'pengguna_email' => $request->email,
             'pengguna_password' => Hash::make($request->password),
-            'pengguna_peran' => 'petani', // Default role
+            'pengguna_peran' => $request->peran,
             'pengguna_lokasi' => 'Belum diatur', // Default location
         ]);
 

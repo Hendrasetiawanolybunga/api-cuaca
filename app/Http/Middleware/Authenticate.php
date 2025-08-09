@@ -13,7 +13,7 @@ class Authenticate extends Middleware
      */
     protected function redirectTo(Request $request): ?string
     {
-        // Ambil user yang baru login
+        // Ambil user yang baru login atau register
         $user = Auth::user();
 
         // Cek peran user dan arahkan sesuai
@@ -30,6 +30,6 @@ class Authenticate extends Middleware
         }
 
         // Default kalau tidak ada peran cocok
-        return route('home');
+        return redirect('/login');
     }
 }
