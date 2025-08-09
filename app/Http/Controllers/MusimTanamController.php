@@ -5,12 +5,24 @@ namespace App\Http\Controllers;
 use App\Models\MusimTanam;
 use App\Models\Kebun;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MusimTanamController extends Controller
 {
     public function index()
     {
-        $data = MusimTanam::with('kebun')->latest()->paginate(10);
+        $user = Auth::user();
+
+        if ($user->pengguna_peran === 'petani') {
+            // Petani hanya lihat musim tanam yang kebunnya dimiliki dia
+            $data = MusimTanam::with('kebun')->whereHas('kebun', function ($query) use ($user) {
+                    $query->where('pengguna_id', $user->pengguna_id);
+                })->latest()->paginate(10);
+        } else {
+            // Admin/penyuluh lihat semua musim tanam
+            $data = MusimTanam::with('kebun')->latest()->paginate(10);
+        }
+
         return view('musimtanam.index', compact('data'));
     }
 

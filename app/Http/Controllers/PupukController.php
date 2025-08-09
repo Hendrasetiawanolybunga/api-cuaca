@@ -5,12 +5,24 @@ namespace App\Http\Controllers;
 use App\Models\Pupuk;
 use App\Models\MusimTanam;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PupukController extends Controller
 {
     public function index()
     {
-        $data = Pupuk::with('musimTanam')->latest()->paginate(10);
+        $user = Auth::user();
+
+        if ($user->pengguna_peran === 'petani') {
+            // Petani hanya lihat pupuk dari musim tanam milik kebunnya sendiri
+            $data = Pupuk::with('musimTanam.kebun')->whereHas('musimTanam.kebun', function ($query) use ($user) {
+                    $query->where('pengguna_id', $user->pengguna_id);
+                })->latest()->paginate(10);
+        } else {
+            // Admin/Penyuluh lihat semua
+            $data = Pupuk::with('musimTanam.kebun')->latest()->paginate(10);
+        }
+
         return view('pupuk.index', compact('data'));
     }
 

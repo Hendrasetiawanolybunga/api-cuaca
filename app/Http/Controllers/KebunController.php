@@ -5,12 +5,22 @@ namespace App\Http\Controllers;
 use App\Models\Kebun;
 use App\Models\Pengguna;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class KebunController extends Controller
 {
     public function index()
     {
-        $data = Kebun::with('pengguna')->latest()->paginate(10);
+        $user = Auth::user();
+
+        if ($user->pengguna_peran === 'petani') {
+            // Petani hanya lihat kebunnya sendiri
+            $data = Kebun::with('pengguna')->where('pengguna_id', $user->pengguna_id)->latest()->paginate(10);
+        } else {
+            // Admin/penyuluh lihat semua kebun
+            $data = Kebun::with('pengguna')->latest()->paginate(10);
+        }
+
         return view('kebun.index', compact('data'));
     }
 

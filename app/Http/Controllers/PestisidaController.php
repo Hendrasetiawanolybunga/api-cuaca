@@ -5,12 +5,24 @@ namespace App\Http\Controllers;
 use App\Models\Pestisida;
 use App\Models\MusimTanam;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PestisidaController extends Controller
 {
     public function index()
     {
-        $data = Pestisida::with('musimTanam')->latest()->paginate(10);
+        $user = Auth::user();
+
+        if ($user->pengguna_peran === 'petani') {
+            // Petani hanya lihat pestisida dari musim tanam milik kebunnya sendiri
+            $data = Pestisida::with('musimTanam.kebun')->whereHas('musimTanam.kebun', function ($query) use ($user) {
+                    $query->where('pengguna_id', $user->pengguna_id);
+                })->latest()->paginate(10);
+        } else {
+            // Admin/Penyuluh lihat semua
+            $data = Pestisida::with('musimTanam.kebun')->latest()->paginate(10);
+        }
+
         return view('pestisida.index', compact('data'));
     }
 
