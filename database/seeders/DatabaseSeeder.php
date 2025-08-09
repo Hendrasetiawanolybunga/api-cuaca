@@ -17,10 +17,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Jalankan seeder peran
-        $this->call(PeranSeeder::class);
+        // $this->call(PeranSeeder::class);
         
         // Ambil peran admin
-        $adminRole = Peran::where('peran_nama', 'admin')->first();
+        // $adminRole = Peran::where('peran_nama', 'admin')->first();
 
         // Buat pengguna admin default
         $admin = Pengguna::updateOrCreate(
@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
                 'pengguna_nama' => 'Admin',
                 'pengguna_password' => Hash::make('password'),
                 'pengguna_peran' => 'admin',
-                'peran_id' => $adminRole->peran_id,
+                // 'peran_id' => $adminRole->peran_id,
                 'pengguna_lokasi' => 'Kantor Pusat',
             ]
         );

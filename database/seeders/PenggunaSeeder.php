@@ -15,8 +15,8 @@ class PenggunaSeeder extends Seeder
     public function run(): void
     {
         // Ambil peran yang tersedia
-        $penyuluhRole = Peran::where('peran_nama', 'penyuluh')->first();
-        $petaniRole = Peran::where('peran_nama', 'petani')->first();
+        // $penyuluhRole = Peran::where('peran_nama', 'penyuluh')->first();
+        // $petaniRole = Peran::where('peran_nama', 'petani')->first();
         
         // Data pengguna dummy
         $penggunaData = [
@@ -25,7 +25,7 @@ class PenggunaSeeder extends Seeder
                 'pengguna_email' => 'budi@gmail.com',
                 'pengguna_password' => Hash::make('password'),
                 'pengguna_peran' => 'penyuluh',
-                'peran_id' => $penyuluhRole->peran_id,
+                // 'peran_id' => $penyuluhRole->peran_id,
                 'pengguna_lokasi' => 'Kupang Tengah',
             ],
             [
@@ -33,7 +33,7 @@ class PenggunaSeeder extends Seeder
                 'pengguna_email' => 'dewi@gmail.com',
                 'pengguna_password' => Hash::make('password'),
                 'pengguna_peran' => 'penyuluh',
-                'peran_id' => $penyuluhRole->peran_id,
+                // 'peran_id' => $penyuluhRole->peran_id,
                 'pengguna_lokasi' => 'Kupang Timur',
             ],
             [
@@ -41,7 +41,7 @@ class PenggunaSeeder extends Seeder
                 'pengguna_email' => 'ahmad@gmail.com',
                 'pengguna_password' => Hash::make('password'),
                 'pengguna_peran' => 'petani',
-                'peran_id' => $petaniRole->peran_id,
+                // 'peran_id' => $petaniRole->peran_id,
                 'pengguna_lokasi' => 'Amarasi',
             ],
             [
@@ -49,7 +49,7 @@ class PenggunaSeeder extends Seeder
                 'pengguna_email' => 'siti@gmail.com',
                 'pengguna_password' => Hash::make('password'),
                 'pengguna_peran' => 'petani',
-                'peran_id' => $petaniRole->peran_id,
+                // 'peran_id' => $petaniRole->peran_id,
                 'pengguna_lokasi' => 'Kupang Barat',
             ],
             [
@@ -57,7 +57,7 @@ class PenggunaSeeder extends Seeder
                 'pengguna_email' => 'joko@gmail.com',
                 'pengguna_password' => Hash::make('password'),
                 'pengguna_peran' => 'petani',
-                'peran_id' => $petaniRole->peran_id,
+                // 'peran_id' => $petaniRole->peran_id,
                 'pengguna_lokasi' => 'Kupang Tengah',
             ],
         ];

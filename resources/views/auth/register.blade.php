@@ -47,19 +47,22 @@
                 <label class="form-label">Peran</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fa-solid fa-user-tag"></i></span>
-                    <select name="peran_id" class="form-select @error('peran_id') is-invalid @enderror" required>
+                    <select name="pengguna_peran" class="form-select @error('pengguna_peran') is-invalid @enderror" required>
                         <option value="">-- Pilih Peran --</option>
-                        @foreach($peran as $p)
+                            <option value="penyuluh" {{ old('pengguna_peran') == 'penyuluh' ? 'selected' : '' }}>Penyuluh
+                            </option>
+                            <option value="petani" {{ old('pengguna_peran') == 'petani' ? 'selected' : '' }}>Petani</option>
+                        {{-- @foreach($peran as $p)
                             <option value="{{ $p->peran_id }}" {{ old('peran_id') == $p->peran_id ? 'selected' : '' }}>{{ $p->peran_nama }}</option>
-                        @endforeach
+                        @endforeach --}}
                     </select>
-                    @error('peran_id')
+                    @error('pengguna_peran')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
             </div>
             
-            <div class="mb-3">
+            {{-- <div class="mb-3">
                 <label for="lokasi" class="form-label">Lokasi</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
@@ -68,7 +71,7 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-            </div>
+            </div> --}}
 
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
