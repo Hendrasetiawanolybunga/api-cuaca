@@ -44,11 +44,11 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Peran</label>
+                <label class="form-label">Peran <small class="text-muted">(Opsional - Default: Admin)</small></label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fa-solid fa-user-tag"></i></span>
-                    <select name="peran_id" class="form-select @error('peran_id') is-invalid @enderror" required>
-                        <option value="">-- Pilih Peran --</option>
+                    <select name="peran_id" class="form-select @error('peran_id') is-invalid @enderror">
+                        <option value="">-- Default: Admin --</option>
                         @foreach($peran as $p)
                             <option value="{{ $p->peran_id }}" {{ old('peran_id') == $p->peran_id ? 'selected' : '' }}>{{ $p->peran_nama }}</option>
                         @endforeach

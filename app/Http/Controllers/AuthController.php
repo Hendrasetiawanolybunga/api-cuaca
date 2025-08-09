@@ -18,7 +18,7 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect('/');
         }
-        // Ambil data peran dari database
+        // Ambil data peran dari database (termasuk admin untuk ditampilkan di dropdown)
         $peran = Peran::whereIn('peran_nama', ['penyuluh', 'petani'])->get();
         return view('auth.login', compact('peran'));
     }
@@ -31,14 +31,22 @@ class AuthController extends Controller
         $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
-            'peran_id' => ['required', 'exists:peran,peran_id'],
+            'peran_id' => ['nullable', 'exists:peran,peran_id'],
         ]);
 
         // Cari pengguna berdasarkan email
         $pengguna = Pengguna::where('pengguna_email', $request->email)->first();
         
+        // Jika peran_id tidak dipilih, gunakan peran admin sebagai default
+        if (empty($request->peran_id)) {
+            $adminRole = Peran::where('peran_nama', 'admin')->first();
+            if ($adminRole) {
+                $request->merge(['peran_id' => $adminRole->peran_id]);
+            }
+        }
+        
         // Jika pengguna ditemukan, periksa apakah peran_id sesuai
-        if ($pengguna && $pengguna->peran_id != $request->peran_id) {
+        if ($pengguna && $request->peran_id && $pengguna->peran_id != $request->peran_id) {
             return back()->withErrors([
                 'peran_id' => 'Peran yang dipilih tidak sesuai dengan akun Anda.',
             ])->withInput($request->except('password'));
