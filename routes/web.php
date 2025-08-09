@@ -20,7 +20,7 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 // Admin Routes - Protected by auth middleware
-Route::prefix('admin')->middleware('auth')->group(function () {
+Route::prefix('user')->middleware('auth')->group(function () {
     Route::resource('peran', PeranController::class);
     Route::resource('pengguna', PenggunaController::class);
     Route::resource('kebun', KebunController::class);

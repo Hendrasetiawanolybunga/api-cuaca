@@ -34,22 +34,22 @@
         @auth
             {{-- Menu untuk admin dan penyuluh --}}
             @if (in_array(Auth::user()->pengguna_peran, ['admin', 'penyuluh']))
-                <a href="{{ url('/admin/pengguna') }}" class="{{ request()->is('admin/pengguna*') ? 'active' : '' }}">
+                <a href="{{ url('/user/pengguna') }}" class="{{ request()->is('user/pengguna*') ? 'active' : '' }}">
                     <i class="fa-solid fa-users"></i> Pengguna
                 </a>
             @endif
 
             {{-- Menu yang bisa diakses semua peran --}}
-            <a href="{{ url('/admin/kebun') }}" class="{{ request()->is('admin/kebun*') ? 'active' : '' }}">
+            <a href="{{ url('/user/kebun') }}" class="{{ request()->is('user/kebun*') ? 'active' : '' }}">
                 <i class="fa-solid fa-tree"></i> Kebun
             </a>
-            <a href="{{ url('/admin/musim-tanam') }}" class="{{ request()->is('admin/musim-tanam*') ? 'active' : '' }}">
+            <a href="{{ url('/user/musim-tanam') }}" class="{{ request()->is('user/musim-tanam*') ? 'active' : '' }}">
                 <i class="fa-solid fa-seedling"></i> Musim Tanam
             </a>
-            <a href="{{ url('/admin/pestisida') }}" class="{{ request()->is('admin/pestisida*') ? 'active' : '' }}">
+            <a href="{{ url('/user/pestisida') }}" class="{{ request()->is('user/pestisida*') ? 'active' : '' }}">
                 <i class="fa-solid fa-spray-can-sparkles"></i> Pestisida
             </a>
-            <a href="{{ url('/admin/pupuk') }}" class="{{ request()->is('admin/pupuk*') ? 'active' : '' }}">
+            <a href="{{ url('/user/pupuk') }}" class="{{ request()->is('user/pupuk*') ? 'active' : '' }}">
                 <i class="fa-solid fa-flask"></i> Pupuk
             </a>
         @endauth
