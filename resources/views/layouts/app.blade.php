@@ -59,22 +59,12 @@
     <div class="content">
         @auth
             <div class="d-flex justify-content-end mb-3">
-                <div class="dropdown">
-                    <button class="btn btn-outline-success dropdown-toggle" type="button" id="userDropdown"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user-circle me-1"></i> {{ Auth::user()->pengguna_nama }}
+                <form method="POST" action="{{ route('logout') }}" onsubmit="return confirm('Yakin ingin keluat dari akun?')">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-danger">
+                        {{ Auth::user()->pengguna_nama }} | Logout <i class="fas fa-sign-out-alt me-1"></i>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="dropdown-item text-danger">
-                                    <i class="fas fa-sign-out-alt me-1"></i> Logout
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
+                </form>
             </div>
         @endauth
         @yield('content')
