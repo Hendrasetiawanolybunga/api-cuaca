@@ -86,15 +86,42 @@
         </div>
 
             <div class="row g-4 mb-5">
+                {{-- Dropdown Pilihan Kebun --}}
+                <div class="col-md-12 mb-3">
+                    <div class="card shadow-sm bg-white">
+                        <div class="card-header bg-card-green text-dark">
+                            <h5 class="mb-0 fw-bold"><i class="bi bi-geo-alt me-2"></i> Pilih Lokasi Kebun</h5>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <select id="kebun-selector" class="form-select form-select-lg shadow-sm">
+                                        @if(isset($kebunList) && $kebunList->count() > 0)
+                                            @foreach($kebunList as $kebun)
+                                                <option value="{{ $kebun->kebun_id }}" {{ $selectedKebunId == $kebun->kebun_id ? 'selected' : '' }}>{{ $kebun->kebun_nama }}</option>
+                                            @endforeach
+                                        @else
+                                            <option value="">Tidak ada kebun tersedia</option>
+                                        @endif
+                                    </select>
+                                </div>
+                                <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                                    <button id="refresh-weather" class="btn btn-success"><i class="bi bi-arrow-clockwise me-2"></i> Perbarui Data Cuaca</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 {{-- Bagian Peta --}}
                 <div class="col-md-6">
                     <div class="card shadow-sm h-100 bg-white">
                         <div class="card-header bg-card-green text-dark">
-                            <h5 class="mb-0 fw-bold"><i class="bi bi-map me-2"></i> Pilih Lokasi untuk Data Cuaca</h5>
+                            <h5 class="mb-0 fw-bold"><i class="bi bi-map me-2"></i> Lokasi Kebun</h5>
                         </div>
                         <div class="card-body p-3">
                             <div id="map"></div>
-                            <small class="text-muted mt-2 d-block text-center">Klik pada peta untuk mendapatkan data cuaca di lokasi yang berbeda.</small>
+                            <small class="text-muted mt-2 d-block text-center">Peta menampilkan lokasi kebun yang dipilih.</small>
                         </div>
                     </div>
                 </div>
@@ -176,8 +203,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
-        // Logika Peta Interaktif ,
-        let map = L.map('map').setView([-10.0647185, 123.8625032], 10);
+        // Inisialisasi peta
+        let map = L.map('map').setView([{{ $lat ?? -10.0647185 }}, {{ $lon ?? 123.8625032 }}], 10);
         
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -197,32 +224,60 @@
         L.control.layers(baseLayers).addTo(map);
 
         let currentMarker;
-
-        map.on('click', function(e) {
-            const { lat, lng } = e.latlng;
-            
+        
+        // Inisialisasi marker pada lokasi awal
+        if ({{ $lat ?? 'null' }} && {{ $lon ?? 'null' }}) {
             if (currentMarker) {
                 map.removeLayer(currentMarker);
             }
-
-            currentMarker = L.marker([lat, lng]).addTo(map);
+            currentMarker = L.marker([{{ $lat }}, {{ $lon }}]).addTo(map);
+            map.setView([{{ $lat }}, {{ $lon }}], 13);
+        }
+        
+        // Event listener untuk dropdown kebun
+        document.getElementById('kebun-selector').addEventListener('change', function() {
+            getWeatherDataForSelectedKebun();
+        });
+        
+        // Event listener untuk tombol refresh
+        document.getElementById('refresh-weather').addEventListener('click', function() {
+            getWeatherDataForSelectedKebun();
+        });
+        
+        // Fungsi untuk mendapatkan data cuaca berdasarkan kebun yang dipilih
+        function getWeatherDataForSelectedKebun() {
+            const kebunId = document.getElementById('kebun-selector').value;
+            
+            if (!kebunId) {
+                alert('Silakan pilih kebun terlebih dahulu');
+                return;
+            }
             
             const weatherCard = document.getElementById('current-weather');
             const forecastSection = document.getElementById('forecast-section');
             weatherCard.innerHTML = '<div class="spinner-border text-success" role="status"></div><p class="mt-3">Mengambil data...</p>';
             forecastSection.innerHTML = '<div class="text-center"><div class="spinner-border text-success" role="status"></div><p class="mt-3">Mengambil data...</p></div>';
 
-            axios.get(`/get-weather?lat=${lat}&lon=${lng}`)
+            axios.get(`/get-weather-by-kebun?kebun_id=${kebunId}`)
                 .then(response => {
                     const data = response.data;
                     updateWeatherUI(data.dataCuacaSaatIni, data.dataForecast);
+                    
+                    // Update peta dengan lokasi kebun
+                    if (data.lat && data.lon) {
+                        if (currentMarker) {
+                            map.removeLayer(currentMarker);
+                        }
+                        currentMarker = L.marker([data.lat, data.lon]).addTo(map);
+                        map.setView([data.lat, data.lon], 13);
+                    }
                 })
                 .catch(error => {
                     weatherCard.innerHTML = '<p class="text-danger mt-3">Gagal mengambil data cuaca.</p>';
                     forecastSection.innerHTML = '<p class="text-center text-danger mt-3">Gagal mengambil data prediksi.</p>';
                     console.error('Error fetching weather data:', error);
                 });
-        });
+        }
 
         function updateWeatherUI(current, forecast) {
             const weatherCard = document.getElementById('current-weather');

@@ -34,4 +34,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 Route::get('/', [DashboardController::class, 'index'])->middleware('auth');
 
 // Route untuk mengambil data cuaca berdasarkan koordinat - Protected by auth middleware
-Route::get('/get-weather', [DashboardController::class, 'getWeather'])->middleware('auth');
+Route::get('/get-weather', [DashboardController::class, 'getWeather']);
+
+// Route untuk mengambil data cuaca berdasarkan ID kebun
+Route::get('/get-weather-by-kebun', [DashboardController::class, 'getWeatherByKebunId']);

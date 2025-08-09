@@ -7,6 +7,7 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use App\Models\Kebun;
 
 class DashboardController extends Controller implements HasMiddleware
 {
@@ -18,24 +19,46 @@ class DashboardController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('auth', except: ['getWeather']),
+            new Middleware('auth', except: ['getWeather', 'getWeatherByKebunId']),
         ];
     }
 
     // Metode untuk menampilkan halaman dashboard
     public function index()
     {
-        // Koordinat default Kupang untuk tampilan awal
-        $lat = -10.1783; 
-        $lon = 123.5937;
+        // Ambil semua data kebun
+        $kebunList = Kebun::all();
+        
+        // Jika ada kebun, gunakan koordinat kebun pertama sebagai default
+        // Jika tidak, gunakan koordinat default Kupang
+        if ($kebunList->count() > 0) {
+            $defaultKebun = $kebunList->first();
+            $koordinat = $this->parseKoordinat($defaultKebun->kebun_lokasi);
+            $lat = $koordinat['lat'];
+            $lon = $koordinat['lon'];
+            $selectedKebunId = $defaultKebun->kebun_id;
+        } else {
+            // Koordinat default Kupang untuk tampilan awal jika tidak ada kebun
+            $lat = -10.1783; 
+            $lon = 123.5937;
+            $selectedKebunId = null;
+        }
         
         // Panggil metode getWeatherData untuk data cuaca awal
         $weatherData = $this->getWeatherData($lat, $lon);
 
-        return view('dashboard', array_merge($weatherData));
+        return view('dashboard', array_merge(
+            $weatherData, 
+            [
+                'kebunList' => $kebunList,
+                'selectedKebunId' => $selectedKebunId,
+                'lat' => $lat,
+                'lon' => $lon
+            ]
+        ));
     }
 
-    // Metode baru untuk mengambil data cuaca dari API
+    // Metode untuk mengambil data cuaca berdasarkan koordinat
     public function getWeather(Request $request)
     {
         // Validasi parameter lat dan lon
@@ -50,6 +73,50 @@ class DashboardController extends Controller implements HasMiddleware
         $weatherData = $this->getWeatherData($lat, $lon);
         
         return response()->json($weatherData);
+    }
+    
+    // Metode baru untuk mengambil data cuaca berdasarkan ID kebun
+    public function getWeatherByKebunId(Request $request)
+    {
+        // Validasi parameter kebun_id
+        $request->validate([
+            'kebun_id' => 'required|exists:kebun,kebun_id'
+        ]);
+        
+        $kebunId = $request->kebun_id;
+        $kebun = Kebun::findOrFail($kebunId);
+        
+        // Parse koordinat dari kebun_lokasi
+        $koordinat = $this->parseKoordinat($kebun->kebun_lokasi);
+        $lat = $koordinat['lat'];
+        $lon = $koordinat['lon'];
+        
+        $weatherData = $this->getWeatherData($lat, $lon);
+        $weatherData['lat'] = $lat;
+        $weatherData['lon'] = $lon;
+        $weatherData['kebun'] = $kebun;
+        
+        return response()->json($weatherData);
+    }
+    
+    // Metode helper untuk mengurai string koordinat menjadi lat dan lon
+    private function parseKoordinat($lokasiString)
+    {
+        // Format yang diharapkan: 'latitude,longitude'
+        $parts = explode(',', $lokasiString);
+        
+        if (count($parts) === 2) {
+            return [
+                'lat' => (float) trim($parts[0]),
+                'lon' => (float) trim($parts[1])
+            ];
+        }
+        
+        // Jika format tidak sesuai, kembalikan koordinat default Kupang
+        return [
+            'lat' => -10.1783,
+            'lon' => 123.5937
+        ];
     }
     
     // Metode helper untuk mengambil data dari OpenWeatherMap
