@@ -28,12 +28,14 @@ class AuthController extends Controller
         $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
+            'peran' => ['required'],
         ]);
 
         // Menyesuaikan kredensial untuk model Pengguna
         $credentials = [
             'pengguna_email' => $request->email,
             'password' => $request->password,
+            'pengguna_peran' => $request->peran
         ];
 
         if (Auth::attempt($credentials, $request->filled('remember'))) {
@@ -72,7 +74,7 @@ class AuthController extends Controller
             'pengguna_nama' => $request->name,
             'pengguna_email' => $request->email,
             'pengguna_password' => Hash::make($request->password),
-            'pengguna_peran' => 'Petani', // Default role
+            'pengguna_peran' => 'petani', // Default role
             'pengguna_lokasi' => 'Belum diatur', // Default location
         ]);
 
