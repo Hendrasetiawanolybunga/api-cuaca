@@ -29,6 +29,7 @@
         <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">
             <i class="fa-solid fa-gauge-high"></i> Dashboard
         </a>
+        @auth
         {{-- <a href="{{ url('/admin/peran') }}" class="{{ request()->is('admin/peran*') ? 'active' : '' }}">
             <i class="fa-solid fa-user-shield"></i> Peran
         </a> --}}
@@ -46,11 +47,31 @@
         </a>
         <a href="{{ url('/admin/pupuk') }}" class="{{ request()->is('admin/pupuk*') ? 'active' : '' }}">
             <i class="fa-solid fa-flask"></i> Pupuk
-        </a>
+        </a>   
+        @endauth
     </div>
 
     <!-- Content -->
     <div class="content">
+        @auth
+        <div class="d-flex justify-content-end mb-3">
+            <div class="dropdown">
+                <button class="btn btn-outline-success dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-user-circle me-1"></i> {{ Auth::user()->name }}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="dropdown-item text-danger">
+                                <i class="fas fa-sign-out-alt me-1"></i> Logout
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        @endauth
         @yield('content')
     </div>
 
