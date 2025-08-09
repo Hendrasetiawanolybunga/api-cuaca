@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Pengguna;
+use App\Models\Peran;
 
 class AuthController extends Controller
 {
@@ -17,7 +18,9 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect('/');
         }
-        return view('auth.login');
+        // Ambil data peran dari database
+        $peran = Peran::whereIn('peran_nama', ['penyuluh', 'petani'])->get();
+        return view('auth.login', compact('peran'));
     }
 
     /**
@@ -28,14 +31,23 @@ class AuthController extends Controller
         $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
-            'peran' => ['required'],
+            'peran_id' => ['required', 'exists:peran,peran_id'],
         ]);
 
+        // Cari pengguna berdasarkan email
+        $pengguna = Pengguna::where('pengguna_email', $request->email)->first();
+        
+        // Jika pengguna ditemukan, periksa apakah peran_id sesuai
+        if ($pengguna && $pengguna->peran_id != $request->peran_id) {
+            return back()->withErrors([
+                'peran_id' => 'Peran yang dipilih tidak sesuai dengan akun Anda.',
+            ])->withInput($request->except('password'));
+        }
+        
         // Menyesuaikan kredensial untuk model Pengguna
         $credentials = [
             'pengguna_email' => $request->email,
             'password' => $request->password,
-            'pengguna_peran' => $request->peran
         ];
 
         if (Auth::attempt($credentials, $request->filled('remember'))) {
@@ -56,7 +68,9 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect('/');
         }
-        return view('auth.register');
+        // Ambil data peran dari database (hanya Penyuluh dan Petani)
+        $peran = Peran::whereIn('peran_nama', ['penyuluh', 'petani'])->get();
+        return view('auth.register', compact('peran'));
     }
 
     /**
@@ -68,15 +82,20 @@ class AuthController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:pengguna,pengguna_email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'peran' => ['required'],
+            'peran_id' => ['required', 'exists:peran,peran_id'],
+            'lokasi' => ['required', 'string', 'max:255'],
         ]);
 
+        // Ambil nama peran berdasarkan peran_id
+        $peranData = Peran::find($request->peran_id);
+        
         $user = Pengguna::create([
             'pengguna_nama' => $request->name,
             'pengguna_email' => $request->email,
             'pengguna_password' => Hash::make($request->password),
-            'pengguna_peran' => $request->peran,
-            'pengguna_lokasi' => 'Belum diatur', // Default location
+            'peran_id' => $request->peran_id,
+            'pengguna_peran' => $peranData->peran_nama,
+            'pengguna_lokasi' => $request->lokasi,
         ]);
 
         Auth::login($user);

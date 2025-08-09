@@ -47,13 +47,13 @@
                 <label class="form-label">Peran</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fa-solid fa-user-tag"></i></span>
-                    <select name="peran" class="form-select @error('peran') is-invalid @enderror" required>
+                    <select name="peran_id" class="form-select @error('peran_id') is-invalid @enderror" required>
                         <option value="">-- Pilih Peran --</option>
-                        <option value="admin" {{ old('peran') == 'admin' ? 'selected' : '' }}>Admin</option>
-                        <option value="penyuluh" {{ old('peran') == 'penyuluh' ? 'selected' : '' }}>Penyuluh</option>
-                        <option value="petani" {{ old('peran') == 'petani' ? 'selected' : '' }}>Petani</option>
+                        @foreach($peran as $p)
+                            <option value="{{ $p->peran_id }}" {{ old('peran_id') == $p->peran_id ? 'selected' : '' }}>{{ $p->peran_nama }}</option>
+                        @endforeach
                     </select>
-                    @error('peran')
+                    @error('peran_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

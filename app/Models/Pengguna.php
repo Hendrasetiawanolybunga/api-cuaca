@@ -18,7 +18,7 @@ class Pengguna extends Authenticatable
         'pengguna_email',
         'pengguna_password',
         'pengguna_lokasi',
-        // 'peran_id'
+        'peran_id'
     ];
     
     /**
@@ -66,7 +66,15 @@ class Pengguna extends Authenticatable
      */
     public function peran()
     {
-        return $this->belongsTo(Peran::class, 'pengguna_peran', 'peran_nama');
+        return $this->belongsTo(Peran::class, 'peran_id', 'peran_id');
+    }
+    
+    /**
+     * Get the role name of the user.
+     */
+    public function getRoleNameAttribute()
+    {
+        return $this->peran ? $this->peran->peran_nama : $this->pengguna_peran;
     }
 
     public function kebun()

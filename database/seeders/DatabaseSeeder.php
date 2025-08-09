@@ -16,21 +16,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Buat peran admin
-        Peran::create([
-            'peran_nama' => 'Admin',
-        ]);
+        // Jalankan seeder peran
+        $this->call(PeranSeeder::class);
+        
+        // Ambil peran admin
+        $adminRole = Peran::where('peran_nama', 'admin')->first();
 
         // Buat pengguna admin default
-        $admin = Pengguna::create([
-            'pengguna_nama' => 'Admin',
-            'pengguna_email' => 'admin@gmail.com',
-            'pengguna_password' => Hash::make('password'),
-            'pengguna_peran' => 'admin',
-            'pengguna_lokasi' => 'Kantor Pusat',
-        ]);
+        $admin = Pengguna::updateOrCreate(
+            ['pengguna_email' => 'admin@gmail.com'],
+            [
+                'pengguna_nama' => 'Admin',
+                'pengguna_password' => Hash::make('password'),
+                'pengguna_peran' => 'admin',
+                'peran_id' => $adminRole->peran_id,
+                'pengguna_lokasi' => 'Kantor Pusat',
+            ]
+        );
         
-        // Buat data kebun contoh
+        // Buat data kebun contoh untuk admin
         $kebunData = [
             [
                 'kebun_nama' => 'Kebun Jagung Kupang Tengah',
@@ -55,7 +59,19 @@ class DatabaseSeeder extends Seeder
         ];
         
         foreach ($kebunData as $kebun) {
-            Kebun::create($kebun);
+            Kebun::updateOrCreate(
+                ['kebun_nama' => $kebun['kebun_nama'], 'pengguna_id' => $kebun['pengguna_id']],
+                $kebun
+            );
         }
+        
+        // Jalankan seeder lainnya
+        $this->call([
+            PenggunaSeeder::class,
+            KebunSeeder::class,
+            MusimTanamSeeder::class,
+            PestisidaSeeder::class,
+            PupukSeeder::class,
+        ]);
     }
 }

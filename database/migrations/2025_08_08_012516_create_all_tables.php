@@ -23,8 +23,8 @@ return new class extends Migration {
             $table->string('pengguna_password');
             $table->string('pengguna_lokasi');
             $table->rememberToken();
-            // $table->unsignedBigInteger('peran_id');
-            // $table->foreign('peran_id')->references('peran_id')->on('peran')->onDelete('cascade');
+            $table->unsignedBigInteger('peran_id');
+            $table->foreign('peran_id')->references('peran_id')->on('peran')->onDelete('cascade');
             $table->timestamps();
         });
 
