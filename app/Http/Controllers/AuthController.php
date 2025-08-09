@@ -18,9 +18,9 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect('/');
         }
-        // Ambil data pengguna dari database
-        $pengguna = Pengguna::whereIn('pengguna_peran', ['admin', 'penyuluh', 'petani'])->get();
-        return view('auth.login', compact('pengguna'));
+        // Ambil data peran dari database
+        $peran = Peran::whereIn('peran_nama', ['penyuluh', 'petani'])->get();
+        return view('auth.login', compact('peran'));
     }
 
     /**
@@ -36,6 +36,14 @@ class AuthController extends Controller
 
         // Cari pengguna berdasarkan email
         $pengguna = Pengguna::where('pengguna_email', $request->email)->first();
+        
+        // Jika peran_id tidak dipilih, gunakan peran admin sebagai default
+        // if (empty($request->peran_id)) {
+        //     $adminRole = Peran::where('peran_nama', 'admin')->first();
+        //     if ($adminRole) {
+        //         $request->merge(['peran_id' => $adminRole->peran_id]);
+        //     }
+        // }
         
         // Jika pengguna ditemukan, periksa apakah pengguna_peran sesuai
         if ($pengguna && $pengguna->pengguna_peran != $request->pengguna_peran) {
