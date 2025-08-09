@@ -47,15 +47,7 @@ class DashboardController extends Controller implements HasMiddleware
         // Panggil metode getWeatherData untuk data cuaca awal
         $weatherData = $this->getWeatherData($lat, $lon);
 
-        return view('dashboard', array_merge(
-            $weatherData, 
-            [
-                'kebunList' => $kebunList,
-                'selectedKebunId' => $selectedKebunId,
-                'lat' => $lat,
-                'lon' => $lon
-            ]
-        ));
+        return view('dashboard', array_merge($weatherData));
     }
 
     // Metode untuk mengambil data cuaca berdasarkan koordinat

@@ -26,51 +26,56 @@
         <h4 class="text-center mb-4">
             <i class="fa-solid fa-leaf me-2"></i> FarmEase
         </h4>
+
         <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">
             <i class="fa-solid fa-gauge-high"></i> Dashboard
         </a>
+
         @auth
-        {{-- <a href="{{ url('/admin/peran') }}" class="{{ request()->is('admin/peran*') ? 'active' : '' }}">
-            <i class="fa-solid fa-user-shield"></i> Peran
-        </a> --}}
-        <a href="{{ url('/admin/pengguna') }}" class="{{ request()->is('admin/pengguna*') ? 'active' : '' }}">
-            <i class="fa-solid fa-users"></i> Pengguna
-        </a>
-        <a href="{{ url('/admin/kebun') }}" class="{{ request()->is('admin/kebun*') ? 'active' : '' }}">
-            <i class="fa-solid fa-tree"></i> Kebun
-        </a>
-        <a href="{{ url('/admin/musim-tanam') }}" class="{{ request()->is('admin/musim-tanam*') ? 'active' : '' }}">
-            <i class="fa-solid fa-seedling"></i> Musim Tanam
-        </a>
-        <a href="{{ url('/admin/pestisida') }}" class="{{ request()->is('admin/pestisida*') ? 'active' : '' }}">
-            <i class="fa-solid fa-spray-can-sparkles"></i> Pestisida
-        </a>
-        <a href="{{ url('/admin/pupuk') }}" class="{{ request()->is('admin/pupuk*') ? 'active' : '' }}">
-            <i class="fa-solid fa-flask"></i> Pupuk
-        </a>   
+            {{-- Menu untuk admin dan penyuluh --}}
+            @if (in_array(Auth::user()->pengguna_peran, ['admin', 'penyuluh']))
+                <a href="{{ url('/admin/pengguna') }}" class="{{ request()->is('admin/pengguna*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-users"></i> Pengguna
+                </a>
+            @endif
+
+            {{-- Menu yang bisa diakses semua peran --}}
+            <a href="{{ url('/admin/kebun') }}" class="{{ request()->is('admin/kebun*') ? 'active' : '' }}">
+                <i class="fa-solid fa-tree"></i> Kebun
+            </a>
+            <a href="{{ url('/admin/musim-tanam') }}" class="{{ request()->is('admin/musim-tanam*') ? 'active' : '' }}">
+                <i class="fa-solid fa-seedling"></i> Musim Tanam
+            </a>
+            <a href="{{ url('/admin/pestisida') }}" class="{{ request()->is('admin/pestisida*') ? 'active' : '' }}">
+                <i class="fa-solid fa-spray-can-sparkles"></i> Pestisida
+            </a>
+            <a href="{{ url('/admin/pupuk') }}" class="{{ request()->is('admin/pupuk*') ? 'active' : '' }}">
+                <i class="fa-solid fa-flask"></i> Pupuk
+            </a>
         @endauth
     </div>
 
     <!-- Content -->
     <div class="content">
         @auth
-        <div class="d-flex justify-content-end mb-3">
-            <div class="dropdown">
-                <button class="btn btn-outline-success dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-user-circle me-1"></i> {{ Auth::user()->name }}
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="dropdown-item text-danger">
-                                <i class="fas fa-sign-out-alt me-1"></i> Logout
-                            </button>
-                        </form>
-                    </li>
-                </ul>
+            <div class="d-flex justify-content-end mb-3">
+                <div class="dropdown">
+                    <button class="btn btn-outline-success dropdown-toggle" type="button" id="userDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle me-1"></i> {{ Auth::user()->pengguna_nama }}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="fas fa-sign-out-alt me-1"></i> Logout
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
         @endauth
         @yield('content')
     </div>

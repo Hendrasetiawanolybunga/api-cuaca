@@ -16,18 +16,22 @@
     </div>
 </div>
 
+<!-- Alert Success -->
 @if(session('success'))
-<div class="alert alert-success">
-    <i class="fa-solid fa-circle-check me-2"></i> {{ session('success') }}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <i class="fa-solid fa-check-circle me-2"></i> {{ session('success') }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 @endif
 
+<!-- Action Button -->
 <div class="d-flex justify-content-end mb-3">
-    <a href="{{ route('pestisida.create') }}" class="btn btn-success">
+    <a href="{{ route('pestisida.create') }}" class="btn btn-primary">
         <i class="fa-solid fa-plus me-2"></i> Tambah Pestisida
     </a>
 </div>
 
+<!-- Table Container -->
 <div class="table-container">
     <table class="table table-hover">
         <thead>
@@ -63,7 +67,9 @@
             </tr>
             @empty
             <tr>
-                <td colspan="6" class="text-center">Tidak ada data pestisida</td>
+                <td colspan="6" class="text-center py-4">
+                    <i class="fa-solid fa-info-circle me-2 text-muted"></i> Tidak ada data pestisida
+                </td>
             </tr>
             @endforelse
         </tbody>

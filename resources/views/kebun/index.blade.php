@@ -33,7 +33,7 @@
 
 <!-- Table Container -->
 <div class="table-container">
-    <table class="table table-bordered table-striped">
+    <table class="table table-hover">
         <thead>
             <tr>
                 <th width="5%">ID</th>
