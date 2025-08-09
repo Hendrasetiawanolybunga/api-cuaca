@@ -16,18 +16,20 @@
     </div>
 </div>
 
+<!-- Alert Success -->
+@if(session('success'))
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <i class="fa-solid fa-check-circle me-2"></i> {{ session('success') }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+@endif
+
 <!-- Action Button -->
-<div class="action-button mb-3">
-    <a href="{{ route('musim-tanam.create') }}" class="btn btn-success">
+<div class="d-flex justify-content-end mb-3">
+    <a href="{{ route('musim-tanam.create') }}" class="btn btn-primary">
         <i class="fa-solid fa-plus me-2"></i> Tambah Musim Tanam
     </a>
 </div>
-
-@if(session('success'))
-<div class="alert alert-success">
-    <i class="fa-solid fa-check-circle me-2"></i> {{ session('success') }}
-</div>
-@endif
 
 <!-- Table Container -->
 <div class="table-container">
@@ -63,7 +65,11 @@
                 </td>
             </tr>
             @empty
-            <tr><td colspan="6" class="text-center">Belum ada data</td></tr>
+            <tr>
+                <td colspan="6" class="text-center py-4">
+                    <i class="fa-solid fa-info-circle me-2 text-muted"></i> Tidak ada data musim tanam
+                </td>
+            </tr>
             @endforelse
         </tbody>
     </table>
