@@ -19,8 +19,8 @@ class AuthController extends Controller
             return redirect('/');
         }
         // Ambil data peran dari database
-        $peran = Peran::whereIn('peran_nama', ['penyuluh', 'petani'])->get();
-        return view('auth.login', compact('peran'));
+        $pengguna = Pengguna::whereIn('pengguna_peran', ['admin', 'penyuluh', 'petani'])->get();
+        return view('auth.login', compact('pengguna'));
     }
 
     /**
